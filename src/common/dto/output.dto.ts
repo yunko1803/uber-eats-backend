@@ -1,4 +1,4 @@
-import { ObjectType, PickType, Field, InputType } from "@nestjs/graphql";
+import { ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType()
 export class MutationOutput {

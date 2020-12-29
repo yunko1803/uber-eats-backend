@@ -19,7 +19,8 @@ import { CommonModule } from './common/common.module';
         DB_PORT: Joi.string().required(),
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
-        DB_NAME: Joi.string().required()
+        DB_NAME: Joi.string().required(),
+        SECRET_KEY: Joi.string().required(),
       })
     }),
     TypeOrmModule.forRoot({
