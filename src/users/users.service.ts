@@ -5,18 +5,19 @@ import * as jwt from 'jsonwebtoken';
 import { CreateAccountInput, CreateAccountOutput } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from 'src/jwt/jwt.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private readonly users: Repository<User>
+    private readonly users: Repository<User>,
+    private readonly config: ConfigService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async createAccount({ email, password, role }: CreateAccountInput): Promise<CreateAccountOutput> {
-    // check new user
-    // create user & hash the password
-    // ok
     try {
       const exist = await this.users.findOne({ email });
       if (exist) {
@@ -45,17 +46,16 @@ export class UsersService {
         };
       }
       const isCorrectPassword = await user.checkPassword(password);
-
       if(!isCorrectPassword) {
         return {
           ok: false,
           error: 'Wrong Password'
         };
       }
-
+      const token = jwt.sign({ id: user.id }, this.config.get('SECRET_KEY'))
       return {
         ok: true,
-        token: 'lalala'
+        token,
       };
 
     } catch(error) {
