@@ -15,24 +15,24 @@ export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Mutation(returns => CreateAccountOutput)
-  async createAccount(@Args("input") createAccountInput: CreateAccountInput): Promise<CreateAccountOutput> {
+  createAccount(@Args("input") createAccountInput: CreateAccountInput): Promise<CreateAccountOutput> {
     return this.usersService.createAccount(createAccountInput);
   }
 
   @Mutation(returns => LoginOutput)
-  async login(@Args('input') loginInput: LoginInput) {
+  login(@Args('input') loginInput: LoginInput) {
     return this.usersService.login(loginInput);
   }
 
   @UseGuards(AuthGuard)
   @Mutation(returns => EditProfileOutput)
-  async editProfile(@AuthUser() authUser: User, @Args('input') editProfileInput: EditProfileInput): Promise<EditProfileOutput> {
+  editProfile(@AuthUser() authUser: User, @Args('input') editProfileInput: EditProfileInput): Promise<EditProfileOutput> {
     return this.usersService.editProfile(authUser.id, editProfileInput);
   }
 
   @Mutation(returns => VerifyEmailOutput)
-  async verifyEmail(@Args('input') verifyEmailInput: VerifyEmailInput): Promise<VerifyEmailOutput> {
-    return await this.usersService.verifyEmail(verifyEmailInput.code);
+  verifyEmail(@Args('input') verifyEmailInput: VerifyEmailInput): Promise<VerifyEmailOutput> {
+    return this.usersService.verifyEmail(verifyEmailInput.code);
   }
 
   @Query(returns => User)
@@ -43,7 +43,7 @@ export class UsersResolver {
 
   @UseGuards(AuthGuard)
   @Query(returns => UserProfileOutput)
-  async userProfile(@Args() userProfileInput: UserProfileInput): Promise<UserProfileOutput> {
+  userProfile(@Args() userProfileInput: UserProfileInput): Promise<UserProfileOutput> {
     return this.usersService.findById(userProfileInput.userId);
   }
 }
