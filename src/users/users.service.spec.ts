@@ -7,38 +7,39 @@ import { User } from "./entities/user.entity";
 import { Verification } from "./entities/verification.entity";
 import { UsersService } from "./users.service";
 
-const mockRepository = {
+const mockRepository = () => ({
   findOne: jest.fn(),
   save: jest.fn(),
   create: jest.fn(),
-}
+});
 
 const mockJwtService = {
   sign: jest.fn(),
   verify: jest.fn(),
-}
+};
 
 const mockMailService = {
   sendVerificationEmail: jest.fn(),
-}
+};
 
-type MockRepository<T> = Partial<Record<keyof Repository<T>, jest.Mock>>
+type MockRepository<T> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 
 describe('UserService', () => {
   let service: UsersService;
   let usersRepository: MockRepository<User>;
   let verificationsRepository: MockRepository<Verification>;
+  let mailService: MailService;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [UsersService,
         {
           provide: getRepositoryToken(User),
-          useValue: mockRepository,
+          useValue: mockRepository(),
         },
         {
           provide: getRepositoryToken(Verification),
-          useValue: mockRepository,
+          useValue: mockRepository(),
         },
         {
           provide: JwtService,
@@ -53,6 +54,7 @@ describe('UserService', () => {
     service = module.get<UsersService>(UsersService);
     usersRepository = module.get(getRepositoryToken(User));
     verificationsRepository = module.get(getRepositoryToken(Verification));
+    mailService = module.get<MailService>(MailService);
   })
 
   it('should be defined', () => {
@@ -60,22 +62,69 @@ describe('UserService', () => {
   });
 
   describe('createAccount', () => {
+    const createAccount = {
+      email: '',
+      password: '',
+      role: 0,
+    }
     it('should fail if user exists', async () => {
       usersRepository.findOne.mockResolvedValue({
         id: 1,
         email: 'abc@abc.com',
       });
-      const result = await service.createAccount({
-        email: '',
-        password: '',
-        role: 0,
-      });
+      const result = await service.createAccount(createAccount);
       expect(result).toMatchObject({
         ok: false,
         error: 'User Already Exists'
       });
     });
+
+    it('should create a user', async () => {
+      usersRepository.findOne.mockResolvedValue(undefined);
+      usersRepository.create.mockReturnValue(createAccount);
+      usersRepository.save.mockResolvedValue(createAccount);
+      verificationsRepository.create.mockReturnValue({
+        user: createAccount,
+      });
+      verificationsRepository.save.mockResolvedValue({
+        code: 'code',
+      });
+      const result = await service.createAccount(createAccount);
+      expect(usersRepository.create).toHaveBeenCalledTimes(1);
+      expect(usersRepository.create).toHaveBeenCalledWith(createAccount);
+
+      expect(usersRepository.save).toHaveBeenCalledTimes(1);
+      expect(usersRepository.save).toHaveBeenCalledWith(createAccount);
+
+      expect(verificationsRepository.create).toHaveBeenCalledTimes(1);
+      expect(verificationsRepository.create).toHaveBeenCalledWith({
+        user: createAccount,
+      });
+
+      expect(verificationsRepository.save).toHaveBeenCalledTimes(1);
+      expect(verificationsRepository.save).toHaveBeenCalledWith({
+        user: createAccount
+      });
+
+      expect(mailService.sendVerificationEmail).toHaveBeenCalledTimes(1);
+      expect(mailService.sendVerificationEmail).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(String),
+      );
+
+      expect(result).toEqual({ ok: true });
+    });
+
+    it('should fail on exception', async () => {
+      usersRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.createAccount(createAccount);
+      expect(result).toEqual({
+        ok: false,
+        error: 'Couldn\'t create account'
+      });
+    });
   });
+
   it.todo('login');
   it.todo('findById');
   it.todo('editProfile');
