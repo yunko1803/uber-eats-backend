@@ -16,7 +16,7 @@ jest.mock('jsonwebtoken', () => {
 
 describe('JwtService', () => {
   let service: JwtService;
-  beforeEach(async() => {
+  beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [JwtService, {
         provide: CONFIG_OPTIONS,
