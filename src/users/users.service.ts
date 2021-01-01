@@ -75,25 +75,23 @@ export class UsersService {
     } catch(error) {
       return {
         ok: false,
-        error,
+        error: 'Couldn\'t log in',
       };
     }
   }
 
   async findById(id: number): Promise<UserProfileOutput> {
     try {
-      const user = await this.users.findOne({ id });
-      if (user) {
-        return {
-          ok: true,
-          user,
-        }
-      }
+      const user = await this.users.findOneOrFail({ id });
+      return {
+        ok: true,
+        user,
+      };
     } catch (error) {
       return {
         ok: false,
-        error,
-      }
+        error: 'User Not Found',
+      };
     }
   }
 
@@ -114,7 +112,10 @@ export class UsersService {
         ok: true,
       };
     } catch (error) {
-      return { ok: false, error: 'Could not update profile.' };
+      return {
+        ok: false,
+        error: 'Could not update profile.'
+      };
     }
   }
 
