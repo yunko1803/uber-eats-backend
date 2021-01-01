@@ -26,8 +26,8 @@ export class UsersService {
 
   async createAccount({ email, password, role }: CreateAccountInput): Promise<CreateAccountOutput> {
     try {
-      const exist = await this.users.findOne({ email });
-      if (exist) {
+      const exists = await this.users.findOne({ email });
+      if (exists) {
         return {
           ok: false,
           error: 'User Already Exists'
