@@ -124,7 +124,9 @@ export class UsersService {
       // only brings the relation id
       // const verification = await this.verifications.findOne({ code }, { loadRelationIds: true });
       // brings whole relation data
-      const verification = await this.verifications.findOne({ code }, { relations: ['user'] });
+      const verification = await this.verifications.findOne(
+        { code },
+        { relations: ['user'] });
       if (verification) {
         verification.user.verified = true;
         await this.users.save(verification.user);
@@ -134,11 +136,11 @@ export class UsersService {
       return {
         ok: false,
         error: 'Verification Not Found'
-      }
+      };
     } catch(error) {
       return {
         ok: false,
-        error,
+        error: 'Could Not Verify',
       };
     }
   }
