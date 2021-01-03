@@ -234,6 +234,51 @@ describe('UserModule (e2e)', () => {
     });
   });
 
-  it.todo('editProfile');
+  describe('editProfile', () => {
+    it('should change email', () => {
+      return request(app.getHttpServer())
+      .post(GRAPHQL_ENDPOINT)
+      .set("X-JWT", jwtToken)
+      .send({
+        query: `
+        mutation {
+          editProfile(input: {
+            email: "change@test.com"
+          }) {
+            ok
+            error
+          }
+        }
+        `
+      })
+      .expect(200)
+      .expect(res => {
+        const { ok, error } = res.body.data.editProfile;
+        expect(ok).toBe(true);
+        expect(error).toBe(null);
+      })
+    });
+
+    it('should have a new email', () => {
+      return request(app.getHttpServer())
+      .post(GRAPHQL_ENDPOINT)
+      .set("X-JWT", jwtToken)
+      .send({
+        query: `
+        {
+          me {
+            email
+          }
+        }
+        `
+      })
+      .expect(200)
+      .expect(res => {
+        const { email } = res.body.data.me;
+        console.log(email);
+        expect(email).toBe('change@test.com');
+      });
+    });
+  });
   it.todo('verifyEmail');
 });
