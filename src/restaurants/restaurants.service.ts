@@ -9,6 +9,9 @@ import { RestaurantRepository } from './repositories/restaurant.repository';
 import { AllCategoriesOutput } from './dtos/all-categories.dto';
 import { CategoryInput, CategoryOutput } from './dtos/category.dto';
 import { RestaurantsInput, RestaurantsOutput } from './dtos/restaurants.dto';
+import { RestaurantInput, RestaurantOutput } from './dtos/restaurant.dto';
+import { SearchRestaurantInput, SearchRestaurantOutput } from './dtos/search-restaurant.dto';
+import { ILike, Like, Raw } from 'typeorm';
 
 @Injectable()
 export class RestaurantService {
@@ -155,6 +158,50 @@ export class RestaurantService {
         ok: false,
         error: 'Could not load restaurants'
       };
+    }
+  }
+
+  async findRestaurantById({ restaurantId }: RestaurantInput): Promise<RestaurantOutput> {
+    try {
+      const restaurant = await this.restaurants.findOne(restaurantId);
+      if (!restaurant) {
+        return {
+          ok: false,
+          error: 'Restaurant not found'
+        };
+      }
+      return {
+        ok: true,
+        restaurant
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Could not find restaurant'
+      };
+    }
+  }
+
+  async searchRestaurantByName({ query, page }: SearchRestaurantInput): Promise<SearchRestaurantOutput> {
+    try {
+      const [restaurants, totalResults] = await this.restaurants.findAndCount({
+        where: {
+          name: Raw(name => `${name} ILIKE '%${query}%'`),
+        },
+        take: 25,
+        skip: (page - 1) * 25,
+      });
+      return {
+        ok: true,
+        results: restaurants,
+        totalPages: (Math.ceil(totalResults / 25)),
+        totalResults,
+      }
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Could not search for restaurants'
+      }
     }
   }
 }
