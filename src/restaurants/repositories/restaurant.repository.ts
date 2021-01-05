@@ -1,7 +1,7 @@
-import { CoreOutput } from "src/common/dto/output.dto";
-import { User } from "src/users/entities/user.entity";
-import { EntityRepository, Repository } from "typeorm";
-import { Restaurant } from "../entities/restaurant.entity";
+import { CoreOutput } from 'src/common/dto/output.dto';
+import { User } from 'src/users/entities/user.entity';
+import { EntityRepository, Repository } from 'typeorm';
+import { Restaurant } from '../entities/restaurant.entity';
 
 @EntityRepository(Restaurant)
 export class RestaurantRepository extends Repository<Restaurant> {

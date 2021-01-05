@@ -1,3 +1,4 @@
+import { ILike, Like, Raw } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { CreateRestaurantInput, CreateRestaurantOutput } from './dtos/create-restaurant.dto';
 import { User } from 'src/users/entities/user.entity';
@@ -11,7 +12,6 @@ import { CategoryInput, CategoryOutput } from './dtos/category.dto';
 import { RestaurantsInput, RestaurantsOutput } from './dtos/restaurants.dto';
 import { RestaurantInput, RestaurantOutput } from './dtos/restaurant.dto';
 import { SearchRestaurantInput, SearchRestaurantOutput } from './dtos/search-restaurant.dto';
-import { ILike, Like, Raw } from 'typeorm';
 
 @Injectable()
 export class RestaurantService {

@@ -1,5 +1,5 @@
-import { Field, InputType, ObjectType } from "@nestjs/graphql";
-import { CoreOutput } from "src/common/dto/output.dto";
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { CoreOutput } from 'src/common/dto/output.dto';
 
 @InputType()
 export class DeleteRestaurantInput {
