@@ -16,7 +16,6 @@ export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Mutation(returns => CreateAccountOutput)
-  @Role(['Any'])
   createAccount(@Args("input") createAccountInput: CreateAccountInput): Promise<CreateAccountOutput> {
     return this.usersService.createAccount(createAccountInput);
   }
