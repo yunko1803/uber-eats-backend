@@ -14,15 +14,16 @@ import { RestaurantsInput, RestaurantsOutput } from './dtos/restaurants.dto';
 import { RestaurantInput, RestaurantOutput } from './dtos/restaurant.dto';
 import { SearchRestaurantInput, SearchRestaurantOutput } from './dtos/search-restaurant.dto';
 import { CreateDishInput, CreateDishOutput } from './dtos/create-dish.dto';
-import { Dish } from './entities/dish.entity';
+import { EditDishInput, EditDishOutput } from './dtos/edit-dish.dto';
+import { DeleteDishInput, DeleteDishOutput } from './dtos/delete-dish.dto';
+import { DishRepository } from './repositories/dish.repository';
 
 @Injectable()
 export class RestaurantService {
   constructor(
     private readonly restaurants: RestaurantRepository,
     private readonly categories: CategoryRepository,
-    @InjectRepository(Dish)
-    private readonly dishes: Repository<Dish>,
+    private readonly dishes: DishRepository,
   ) {}
 
   async createRestaurant(owner: User, createRestaurantInput: CreateRestaurantInput): Promise<CreateRestaurantOutput> {
@@ -222,12 +223,53 @@ export class RestaurantService {
       await this.dishes.save(this.dishes.create({ ...createDishInput, restaurant }));
       return {
         ok: true,
-      }
+      };
     } catch (error) {
       return {
         ok: false,
-        error: "Could not create dish"
+        error: 'Could not create dish'
+      };
+    }
+  }
+
+  async editDish(owner: User, editDishInput: EditDishInput): Promise<EditDishOutput> {
+    try {
+      const isValid = await this.dishes.isValid(owner, editDishInput.dishId);
+
+      if (!isValid.ok) {
+        return isValid;
       }
+      await this.dishes.save([{
+        id: editDishInput.dishId,
+        ...editDishInput,
+      }]);
+      return {
+        ok: true
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Could not edit dish'
+      };
+    }
+  }
+
+  async deleteDish(owner: User, { dishId }: DeleteDishInput): Promise<DeleteDishOutput> {
+    try {
+      const isValid = await this.dishes.isValid(owner, dishId);
+      if (!isValid.ok) {
+        return isValid;
+      }
+      await this.dishes.delete(dishId);
+
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Could not delete dish'
+      };
     }
   }
 }
