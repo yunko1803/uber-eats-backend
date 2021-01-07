@@ -7,7 +7,7 @@ import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { Dish } from 'src/restaurants/entities/dish.entity';
 import { OrderItem } from './order-item.entity';
 
-enum OrderStatus {
+export enum OrderStatus {
   Pending = 'Pending',
   Cooking = 'Cooking',
   PickedUp = 'PickedUp',
@@ -24,9 +24,15 @@ export class Order extends CoreEntity {
   @ManyToOne(type => User, user => user.orders, { onDelete: 'SET NULL', nullable: true })
   customer?: User;
 
+  @RelationId((order: Order) => order.customer)
+  customerId: number;
+
   @Field(type => User, { nullable: true })
   @ManyToOne(type => User, user => user.rides, { onDelete: 'SET NULL', nullable: true })
   driver: User;
+
+  @RelationId((order: Order) => order.driver)
+  driverId: number;
 
   @Field(type => Restaurant)
   @ManyToOne(type => Restaurant, restaurant => restaurant.orders, { onDelete: 'SET NULL', nullable: true })
