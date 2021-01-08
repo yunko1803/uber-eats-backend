@@ -235,6 +235,7 @@ export class OrderService {
       return {
         ok: true,
       };
+      console.log('hi');
 
     } catch (error) {
       return {
