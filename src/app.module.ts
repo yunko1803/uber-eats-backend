@@ -55,7 +55,7 @@ import { OrderItem } from './orders/entities/order-item.entity';
       context: ({ req, connection }) => {
         const TOKEN_KEY = 'x-jwt'
         return {
-          token: req ? req.headers[TOKEN_KEY] : connection.context['X-JWT']
+          token: req ? req.headers[TOKEN_KEY] : connection.context[TOKEN_KEY]
         };
       }
     }),
