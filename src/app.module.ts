@@ -54,6 +54,7 @@ import { OrderItem } from './orders/entities/order-item.entity';
       autoSchemaFile: true,
       context: ({ req, connection }) => {
         const TOKEN_KEY = 'x-jwt'
+        console.log('why token key is different');
         return {
           token: req ? req.headers[TOKEN_KEY] : connection.context['X-JWT']
         };
