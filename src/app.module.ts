@@ -73,6 +73,7 @@ import { OrderItem } from './orders/entities/order-item.entity';
     MailModule,
     AuthModule,
     OrdersModule,
+    CommonModule
   ],
   controllers: [],
   providers: [],
