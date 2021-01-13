@@ -44,14 +44,19 @@ export class OrderResolver {
   }
 
   @Mutation(returns => Boolean)
-  potatoReady() {
-    this.pubsub.publish('yoon', { orderSubscription: 'ready'});
+  async potatoReady(@Args('id') id: number) {
+    await this.pubsub.publish('yoon', { orderSubscription: id });
     return true;
   }
 
-  @Subscription(returns => String)
+  @Subscription(returns => String, {
+    filter: (payload, variables, context) => {
+      console.log(payload.orderSubscription, variables.id);
+      return payload.orderSubscription === variables.id;
+    }
+  })
   @Role(['Any'])
-  orderSubscription(@AuthUser() user: User) {
+  orderSubscription(@Args('id') id: number) {
     return this.pubsub.asyncIterator('yoon');
   }
 }
