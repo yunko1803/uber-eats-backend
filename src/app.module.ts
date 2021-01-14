@@ -3,6 +3,7 @@ import * as Joi from 'joi';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
@@ -61,6 +62,7 @@ import { Payment } from './payments/entities/payment.entity';
         };
       }
     }),
+    ScheduleModule.forRoot(),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
     }),
