@@ -10,9 +10,9 @@ import { Dish } from 'src/restaurants/entities/dish.entity';
 @ObjectType()
 @Entity()
 export class Payment extends CoreEntity {
-  @Field(type => Int)
+  @Field(type => String)
   @Column()
-  transactionId: number;
+  transactionId: string;
 
   @Field(type => User)
   @ManyToOne(type => User, user => user.payments)
