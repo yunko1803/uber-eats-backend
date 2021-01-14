@@ -51,9 +51,9 @@ export class OrderResolver {
 
   @Subscription(returns => String, {
     filter: (payload, variables, context) => {
-      console.log(payload.orderSubscription, variables.id);
       return payload.orderSubscription === variables.id;
-    }
+    },
+    resolve: (payload) => `Your id: ${payload.orderSubscription} is ready.`
   })
   @Role(['Any'])
   orderSubscription(@Args('id') id: number) {
